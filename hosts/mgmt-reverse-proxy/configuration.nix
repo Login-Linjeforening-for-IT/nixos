@@ -31,7 +31,7 @@
       certificatesResolvers.letsencrypt.acme = {
         email = "postmaster@login.no";
         storage = "${config.services.traefik.dataDir}/acme.json";
-        httpChallenge.entryPoint = "web";
+        dnsChallenge.provider = "digitalocean";
       };
 
       api.dashboard = true;
@@ -54,15 +54,10 @@
           entryPoints = [ "https" ];
           rule = "Host(`idrac3.${domain}`)";
         };
-        "pve1" = {
-          service = "pve1";
+        "pve" = {
+          service = "pve";
           entryPoints = [ "https" ];
-          rule = "Host(`pve1.${domain}`)";
-        };
-        "pve2" = {
-          service = "pve2";
-          entryPoints = [ "https" ];
-          rule = "Host(`pve2.${domain}`)";
+          rule = "Host(`pve.${domain}`)";
         };
         "truenas" = {
           service = "truenas";
@@ -86,15 +81,16 @@
             { url = "https://192.168.1.54"; }
           ];
         };
-        "pve1" = {
-          loadBalancer.servers = [
-            { url = "https://192.168.1.134:8006"; }
-          ];
-        };
-        "pve2" = {
+        "pve" = {
           loadBalancer.servers = [
             { url = "https://192.168.1.180:8006"; }
+            { url = "https://192.168.1.134:8006"; }
           ];
+          loadBalancer.healthCheck = {
+            path = "/";
+            interval = "10s";
+            timeout = "3s";
+          };
         };
         "truenas" = {
           loadBalancer.servers = [
