@@ -1,4 +1,7 @@
 {config, pkgs, ...}:{
+  environment.sessionVariables = {
+    DO_AUTH_TOKEN_FILE = "/etc/traefik/digitalocean_token";
+  };
   services.traefik = let
     domain = "login.no"; 
   in {
