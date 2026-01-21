@@ -1,7 +1,4 @@
 {config, pkgs, ...}:{
-  environment.sessionVariables = {
-    DO_AUTH_TOKEN_FILE = "/etc/traefik/digitalocean_token";
-  };
   services.traefik = let
     domain = "login.no"; 
   in {
@@ -34,7 +31,7 @@
       certificatesResolvers.letsencrypt.acme = {
         email = "postmaster@login.no";
         storage = "${config.services.traefik.dataDir}/acme.json";
-        dnsChallenge.provider = "digitalocean";
+        httpChallenge.entryPoint = "web";
       };
 
       api.dashboard = true;
