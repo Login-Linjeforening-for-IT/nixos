@@ -1,12 +1,15 @@
 {config, pkgs, ...}:{
-  environment.sessionVariables = {
-    DO_AUTH_TOKEN_FILE = "/etc/traefik/digitalocean_token";
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 ];
   };
   services.traefik = let
     domain = "login.no"; 
   in {
     enable = true;
-
+    environmentFiles = [
+      "/etc/traefik/digitalocean.env"
+    ];
     staticConfigOptions = {
       entryPoints = {
         http = {
@@ -41,6 +44,9 @@
     };
 
     dynamicConfigOptions = {
+      http.serversTransports.insecureTransport = {
+        insecureSkipVerify = true;
+      };
       http.routers = {
         "idrac1" = {
           service = "idrac1";
@@ -70,35 +76,50 @@
       };
       http.services = {
         "idrac1" = {
-          loadBalancer.servers = [
+          loadBalancer = {
+            serversTransport = "insecureTransport";
+            servers = [
             { url = "https://192.168.1.105"; }
           ];
+          };
         };
         "idrac2" = {
-          loadBalancer.servers = [
-            { url = "https://192.168.1.141"; }
-          ];
+          loadBalancer = {
+            serversTransport = "insecureTransport";
+            servers = [
+              { url = "https://192.168.1.141"; }
+            ];
+          };
         };
         "idrac3" = {
-          loadBalancer.servers = [
-            { url = "https://192.168.1.54"; }
-          ];
+          loadBalancer = {
+            serversTransport = "insecureTransport";
+            servers = [
+              { url = "https://192.168.1.54"; }
+            ];
+          };
         };
         "pve" = {
-          loadBalancer.servers = [
-            { url = "https://192.168.1.180:8006"; }
-            { url = "https://192.168.1.134:8006"; }
-          ];
-          loadBalancer.healthCheck = {
-            path = "/";
-            interval = "10s";
-            timeout = "3s";
+          loadBalancer = {
+            serversTransport = "insecureTransport";
+            servers = [
+              { url = "https://192.168.1.180:8006"; }
+              { url = "https://192.168.1.134:8006"; }
+            ];
+            healthCheck = {
+              path = "/";
+              interval = "10s";
+              timeout = "3s";
+            };
           };
         };
         "truenas" = {
-          loadBalancer.servers = [
-            { url = "https://192.168.1.107"; }
-          ];
+          loadBalancer = {
+            serversTransport = "insecureTransport";
+            servers = [
+              { url = "https://192.168.1.107"; }
+            ];
+          };
         };
       };
     };
