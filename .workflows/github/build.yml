@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*-v[0-9]*"
+
+jobs:
+  generate-list:
+    runs-on: ubuntu-latest
+    outputs:
+      build-list: ${{ steps.set-build-list.outputs.build-list }}
+    steps:
+      - name: Build list
+        id: set-build-list
+        run: |
+          BASE="${{ github.event.before }}"
+          HEAD="${{ github.event.after }}"
+
+          echo $(git diff --name-only "$BASE" "$HEAD" \
+          | grep hosts \
+          | xargs -n1 dirname \
+          | sort -u \
+          | sed 's|^hosts/||' \
+          | jq -R . | jq -s .) >> "$GITHUB_OUTPUT"
+  build-and-publish:
+    needs: generate-list
+    runs-on: Proxmox temp
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.generate-list.outputs.build-list) }}
+    steps:
+      - name: Build
+        run: nix build .#${{ matrix.target }}
