@@ -26,6 +26,7 @@
               system = system;
               modules = [
                 {
+                  networking.hostName = host;
                   services.openssh.enable = true;
                   services.qemuGuest.enable = true;
                   services.opkssh = rec {
