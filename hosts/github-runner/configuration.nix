@@ -27,6 +27,7 @@
       url = "https://github.com/Login-Linjeforening-for-IT";
       name = "Proxmox 1";
       enable = true;
+      extraLabels = [ "nixos" ];
       tokenFile = "/var/lib/github-runner/token";
     };
   };
