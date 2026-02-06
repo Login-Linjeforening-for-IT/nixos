@@ -1,0 +1,40 @@
+name: Update NixOS vm
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'Hostname of the target machine'
+        required: true
+        type: string
+      targets:
+        description: 'Comma-separated list of ip addresses to update'
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      host:
+        description: 'Hostname of the target machine'
+        required: true
+        type: string
+      targets:
+        description: 'Comma-separated list of ip addresses to update'
+        required: true
+        type: string
+    secrets:
+      DEPLOY_SSH_KEY:
+        description: 'SSH private key for deployment'
+        required: true
+
+jobs:
+  update:
+    runs-on: nixos
+    steps:
+      - name: Start ssh-agent and add key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Update target machines
+        run: |
+          for target in $(echo "${{ github.event.inputs.targets }}" | tr ',' '\n'); do
+            nixos-rebuild switch --target-host $target --flake .#${{ github.event.inputs.host }}
+          done

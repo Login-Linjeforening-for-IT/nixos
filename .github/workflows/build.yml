@@ -1,3 +1,5 @@
+name: Build NixOS image
+
 on:
   workflow_dispatch:
     inputs:
@@ -9,12 +11,12 @@ on:
         required: true
 
 jobs:
-  build:
-    runs-on: "Proxmox 1"
+  build-publish:
+    runs-on: nixos
     steps:
       - name: Build NixOS image
         run: |
-          nix build .#${{ github.event.inputs.host }}
+          nixos-rebuild build-image --image-variant qemu --flake .#${{ github.event.inputs.host }}
       - name: Copy image to target
         run: |
           cp ./result/nixos.qcow2 /mnt/truenas/imports/nixos-${{ github.event.inputs.host }}-${{ github.event.inputs.version }}.qcow2
