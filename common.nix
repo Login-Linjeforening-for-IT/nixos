@@ -19,10 +19,16 @@
       }
     ];
   };
+  nix.settings.trusted-users = [
+    "tekkom"
+  ];
   security.sudo.wheelNeedsPassword = false;
   users.users.tekkom = {
     isNormalUser = true;
     extraGroups = ["wheel"];
+    openssh.authorizedKeys.keys = [
+      builtins.readFile ./id_ed25519.pub
+    ];
   };
   system.stateVersion = "25.11";
 }
