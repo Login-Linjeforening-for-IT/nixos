@@ -14,6 +14,12 @@
       };
     };
   };
+  users.users.tekkom.openssh.authorizedKeys.keys = [
+    builtins.readFile ./id_ed25519.pub
+  ];
+  nix.settings.trusted-users = [
+    "tekkom"
+  ];
   # optional, but ensures rpc-statsd is running for on demand mounting
   boot.supportedFilesystems = [ "nfs" ];
   services.github-runners = {

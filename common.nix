@@ -24,8 +24,5 @@
     isNormalUser = true;
     extraGroups = ["wheel"];
   };
-  nix.settings.trusted-users = [
-    "tekkom"
-  ];
   system.stateVersion = "25.11";
 }
