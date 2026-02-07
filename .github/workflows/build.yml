@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-publish:
-    runs-on: nixos
+    runs-on: self-hosted
     steps:
       - name: Build NixOS image
         run: |
