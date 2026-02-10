@@ -1,4 +1,4 @@
-{...}:{
+{pkgs, ...}:{
   fileSystems."/mnt/truenas" = {
     device = "192.168.1.107:/mnt/storage0/iso";
     fsType = "nfs";
@@ -23,6 +23,9 @@
       enable = true;
       extraLabels = [ "nixos" ];
       tokenFile = "/var/lib/github-runner/token";
+      extraPackages = with pkgs; [
+        nixos-rebuild
+      ];
     };
   };
 }
