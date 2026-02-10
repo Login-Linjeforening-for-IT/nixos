@@ -19,9 +19,12 @@
       }
     ];
   };
-  nix.settings.trusted-users = [
-    "tekkom"
-  ];
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+    trusted-users = [
+      "tekkom"
+    ];
+  };
   security.sudo.wheelNeedsPassword = false;
   users.users.tekkom = {
     isNormalUser = true;
